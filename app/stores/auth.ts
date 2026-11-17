@@ -15,7 +15,7 @@ export const useAuthStore = defineStore('auth', {
       })
       useCurrentUser().value = this.user
 
-      // TODO: 訪客購物車要跟帳號購物車合併（尚未實作），目前先以帳號的購物車為主
+      // 已實作合併：將本地訪客 ('gust') 與團購購物車跟帳號購物車合併，不覆蓋清空
       await useCartStore().loadFromServer()
     },
 
@@ -23,7 +23,9 @@ export const useAuthStore = defineStore('auth', {
       await $fetch('/api/auth/logout', { method: 'POST' })
       this.user = null
       useCurrentUser().value = null
-      useCartStore().clear()
+     //. 避免登出時把本地購物車清掉
+      // 若希望登出後將畫面上的會員標籤轉回訪客狀態，可呼叫下方方法（不清除商品）
+      useCartStore().saveLocalOnly()
     },
   },
 })

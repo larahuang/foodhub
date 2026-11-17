@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const auth = useAuthStore()
+const cart = useCartStore()
 const route = useRoute()
 
 const email = ref('')
@@ -12,7 +13,15 @@ async function onSubmit() {
   error.value = ''
   try {
     await auth.login(email.value, password.value)
-    await navigateTo(String(route.query.redirect ?? '/'))
+
+    // 若網址有 redirect（例如從購物車按結帳導過來的），跳轉回去並自動展開購物車
+    const redirectPath = route.query.redirect as string | undefined
+    if (redirectPath) {
+      cart.drawer = true
+      await navigateTo(redirectPath)
+    } else {
+      await navigateTo('/')
+    }
   } catch {
     error.value = '帳號或密碼錯誤'
   } finally {

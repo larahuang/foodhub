@@ -31,19 +31,28 @@ export interface Product {
 
 export interface CartItem {
   productId: number
+  groupCartId?: string | null
+  userId?: number| null
+  userName?: string | null
   restaurantId: number
   name: string
   emoji: string
   unitPrice: number
   qty: number
+  isGuest?: boolean
+  submittedToGroup?: boolean
+  isLocalOwner?: boolean
 }
 
 export interface OrderItem {
   id: number
+  order_id?: number
   product_id: number
   name: string
   qty: number
   unit_price: number
+  user_name?: string | null     // 寫入資料庫的訂購人姓名（主揪或訪客名稱）
+  group_cart_id?: string | null // 若需在明細層級也記錄團購編號可一併保留
 }
 
 export interface Order {
@@ -54,5 +63,6 @@ export interface Order {
   phone: string
   status: string
   created_at: string
+  group_cart_id?: string | null // 區分單一訂單 (null) 與團購訂單 (字串編號)
   items: OrderItem[]
 }
